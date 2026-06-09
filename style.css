@@ -287,3 +287,15 @@ tr:hover td { background:rgba(255,255,255,.02); }
 .access-notice .notice-icon { font-size:20px; flex-shrink:0; }
 .access-notice .notice-text { font-size:12px; color:var(--text-secondary); line-height:1.5; }
 .access-notice .notice-text strong { color:var(--yellow); }
+
+/* Status update buttons */
+.status-update-btn {
+  padding:10px 12px; border-radius:10px; font-size:12px; font-weight:600;
+  background:var(--surface); border:1px solid var(--border); color:var(--text-secondary);
+  cursor:pointer; transition:all .2s; font-family:'Inter',sans-serif;
+}
+.status-update-btn:hover {
+  border-color:var(--btn-color); color:var(--btn-color);
+  background:rgba(255,255,255,.03);
+}
+.status-update-btn:active { transform:scale(.97); }

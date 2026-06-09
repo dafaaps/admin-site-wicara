@@ -175,7 +175,7 @@ const institutions = [
 
 // ========== USERS DATA ==========
 const users = [
-  { username: 'admin', password: '123', name: 'Super Admin', role: 'Administrator', avatar: 'SA', institution: 'all', isSuper: true },
+  { username: 'superadmin', password: '123', name: 'Super Admin', role: 'Administrator', avatar: 'SA', institution: 'all', isSuper: true },
   { username: 'kpk', password: '123', name: 'Admin KPK', role: 'Operator Instansi', avatar: 'KP', institution: 'KPK', isSuper: false },
   { username: 'ombudsman', password: '123', name: 'Admin Ombudsman', role: 'Operator Instansi', avatar: 'OM', institution: 'Ombudsman RI', isSuper: false },
   { username: 'kejaksaan', password: '123', name: 'Admin Kejaksaan', role: 'Operator Instansi', avatar: 'KJ', institution: 'Kejaksaan Agung', isSuper: false },
@@ -350,7 +350,7 @@ function renderDashboard() {
     };
     
     tbody.innerHTML = filteredReports.slice(0, 5).map(r => `
-      <tr>
+      <tr style="cursor:pointer" onclick="showReportDetail('${r.id}')">
         <td style="font-weight:600;color:var(--primary);font-size:12px">${r.id}</td>
         <td><div style="font-weight:600">${r.title}</div><div style="font-size:11px;color:var(--text-muted)">${r.location}</div></td>
         <td>${r.institution}</td>
@@ -479,7 +479,7 @@ function renderReports(filter = 'all') {
   };
 
   tbody.innerHTML = filtered.map(r => `
-    <tr>
+    <tr style="cursor:pointer" onclick="showReportDetail('${r.id}')">
       <td style="font-weight:600;color:var(--primary);font-size:12px">${r.id}</td>
       <td><div style="font-weight:600">${r.title}</div><div style="font-size:11px;color:var(--text-muted)">${r.location}</div></td>
       <td>${r.institution}</td>
@@ -517,6 +517,71 @@ function filterReports(status, el) {
   el.style.color = '#fff';
   el.style.borderColor = 'var(--primary)';
   renderReports(status);
+}
+
+// ========== REPORT DETAIL & STATUS UPDATE ==========
+function showReportDetail(reportId) {
+  const r = reportsData.find(rep => rep.id === reportId);
+  if (!r) return;
+
+  const statusMap = {
+    urgent: { label:'Urgent', class:'status-urgent', color:'var(--red)' },
+    process: { label:'Diproses', class:'status-process', color:'var(--yellow)' },
+    done: { label:'Selesai', class:'status-done', color:'var(--green)' },
+    new: { label:'Baru', class:'status-new', color:'var(--blue)' }
+  };
+  const s = statusMap[r.status];
+
+  const modal = document.getElementById('detail-modal');
+  document.getElementById('modal-content').innerHTML = `
+    <div style="position:relative">
+      <div style="height:80px;border-radius:14px 14px 0 0;margin:-24px -24px 0 -24px;background:linear-gradient(135deg,${s.color},var(--card));display:flex;align-items:flex-end;padding:16px 20px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:14px;font-weight:700;color:#fff">${r.id}</div>
+          <span class="status-badge ${s.class}">${s.label}</span>
+        </div>
+      </div>
+      <button onclick="closeModal()" style="position:absolute;top:-8px;right:-8px;width:32px;height:32px;border-radius:8px;background:rgba(0,0,0,.4);border:none;color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="margin-top:18px">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:4px">${r.title}</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">📍 ${r.location} · 📅 ${r.date}</p>
+
+      <div class="card" style="padding:14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-muted)">DETAIL LAPORAN</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Pelapor</span><span style="font-weight:600">${r.reporter}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Instansi</span><span style="font-weight:600">${r.institution}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Tanggal</span><span style="font-weight:600">${r.date}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Status</span><span class="status-badge ${s.class}">${s.label}</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:14px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-muted)">UPDATE STATUS</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="status-update-btn" style="--btn-color:var(--blue)" onclick="updateReportStatus('${r.id}','new')">🔵 Baru</button>
+          <button class="status-update-btn" style="--btn-color:var(--yellow)" onclick="updateReportStatus('${r.id}','process')">🟡 Diproses</button>
+          <button class="status-update-btn" style="--btn-color:var(--red)" onclick="updateReportStatus('${r.id}','urgent')">🔴 Urgent</button>
+          <button class="status-update-btn" style="--btn-color:var(--green)" onclick="updateReportStatus('${r.id}','done')">🟢 Selesai</button>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.classList.add('show');
+}
+
+function updateReportStatus(reportId, newStatus) {
+  const r = reportsData.find(rep => rep.id === reportId);
+  if (!r) return;
+  r.status = newStatus;
+  
+  // Re-render everything
+  renderDashboard();
+  renderReports();
+  
+  // Reopen modal with updated data
+  showReportDetail(reportId);
 }
 
 // ========== INIT ==========
