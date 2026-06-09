@@ -342,11 +342,12 @@ function renderDashboard() {
         <div class="stat-value">${process}</div>
         <div class="stat-label">Sedang Diproses</div>
       </div>
+      ${(!currentUser || currentUser.isSuper) ? `
       <div class="card stat-card">
         <div class="stat-icon" style="background:rgba(59,130,246,.15)">🏛️</div>
         <div class="stat-value">${institutions.length}</div>
         <div class="stat-label">Instansi Terdaftar</div>
-      </div>
+      </div>` : ''}
     `;
   }
 
