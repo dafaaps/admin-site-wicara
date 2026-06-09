@@ -565,7 +565,7 @@ function showReportDetail(reportId) {
 
       <div class="card" style="padding:14px">
         <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-muted)">UPDATE STATUS</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="status-btn-grid">
           <button class="status-update-btn" style="--btn-color:var(--blue)" onclick="updateReportStatus('${r.id}','new')">🔵 Baru</button>
           <button class="status-update-btn" style="--btn-color:var(--yellow)" onclick="updateReportStatus('${r.id}','process')">🟡 Diproses</button>
           <button class="status-update-btn" style="--btn-color:var(--red)" onclick="updateReportStatus('${r.id}','urgent')">🔴 Urgent</button>

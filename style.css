@@ -189,8 +189,14 @@ tr:hover td { background:rgba(255,255,255,.02); }
   .profile-grid { grid-template-columns:1fr; }
   .content { padding:16px; }
   .topbar { padding:12px 16px; }
+  .modal { max-height:90vh; padding:20px; }
 }
 
+@media(max-width:480px) {
+  .stats-grid { grid-template-columns:1fr; }
+  .login-hint .hint-grid { grid-template-columns:1fr; }
+  .status-btn-grid { grid-template-columns:1fr !important; }
+}
 /* ========== LOGIN SCREEN ========== */
 .login-overlay {
   position:fixed; inset:0; z-index:500;
@@ -299,6 +305,8 @@ tr:hover td { background:rgba(255,255,255,.02); }
   background:rgba(255,255,255,.03);
 }
 .status-update-btn:active { transform:scale(.97); }
+
+.status-btn-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 
 /* ========== MESSAGING ========== */
 .msg-filter {
