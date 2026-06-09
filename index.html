@@ -62,6 +62,11 @@
       Laporan Masuk
       <span class="badge">10</span>
     </div>
+    <div class="nav-item" data-page="messages" onclick="showPage('messages')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      Pesan
+      <span class="badge" id="msg-badge">3</span>
+    </div>
     <div class="nav-item" data-page="settings" onclick="showPage('settings')">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       Pengaturan
@@ -240,6 +245,23 @@
     </div>
   </div>
 
+  <!-- ==================== PAGE: MESSAGES ==================== -->
+  <div id="page-messages" class="page">
+    <div class="content">
+      <div class="section-header">
+        <h3>Kotak Pesan</h3>
+        <button class="btn-sm" onclick="openCompose()">✉️ Tulis Pesan</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+        <button class="msg-filter active-filter" onclick="filterMessages('all',this)">Semua</button>
+        <button class="msg-filter" onclick="filterMessages('unread',this)">Belum Dibaca</button>
+        <button class="msg-filter" onclick="filterMessages('read',this)">Sudah Dibaca</button>
+        <button class="msg-filter" onclick="filterMessages('sent',this)">Terkirim</button>
+      </div>
+      <div id="messages-list"></div>
+    </div>
+  </div>
+
   <!-- ==================== PAGE: SETTINGS ==================== -->
   <div id="page-settings" class="page">
     <div class="content">
@@ -291,6 +313,34 @@
 <!-- Detail Modal -->
 <div id="detail-modal" class="modal-overlay">
   <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- Compose Modal -->
+<div id="compose-modal" class="modal-overlay">
+  <div class="modal" style="max-width:500px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h3 style="font-size:16px;font-weight:700">✉️ Tulis Pesan Baru</h3>
+      <button onclick="closeCompose()" style="width:32px;height:32px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">✕</button>
+    </div>
+    <div class="login-field">
+      <label>Penerima</label>
+      <select id="compose-to"></select>
+    </div>
+    <div class="login-field">
+      <label>Subjek</label>
+      <input type="text" id="compose-subject" placeholder="Masukkan subjek pesan...">
+    </div>
+    <div class="login-field">
+      <label>Isi Pesan</label>
+      <textarea id="compose-body" rows="5" placeholder="Tulis pesan Anda..." style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--text);outline:none;resize:none;font-family:'Inter',sans-serif;transition:border-color .2s"></textarea>
+    </div>
+    <button class="login-btn" onclick="sendMessage()">Kirim Pesan</button>
+  </div>
+</div>
+
+<!-- Read Message Modal -->
+<div id="read-modal" class="modal-overlay">
+  <div class="modal" style="max-width:540px" id="read-modal-content"></div>
 </div>
 
 <script src="script.js"></script>

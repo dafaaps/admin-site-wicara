@@ -299,3 +299,54 @@ tr:hover td { background:rgba(255,255,255,.02); }
   background:rgba(255,255,255,.03);
 }
 .status-update-btn:active { transform:scale(.97); }
+
+/* ========== MESSAGING ========== */
+.msg-filter {
+  font-size:12px; padding:7px 16px; border-radius:8px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text-secondary); cursor:pointer; transition:all .2s;
+  font-family:'Inter',sans-serif;
+}
+.msg-filter:hover { border-color:var(--primary); color:var(--primary); }
+.msg-filter.active-filter { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+.msg-card {
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:16px; margin-bottom:10px; cursor:pointer; transition:all .2s;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.msg-card:hover { border-color:rgba(233,30,99,.3); background:var(--surface); }
+.msg-card.unread { border-left:3px solid var(--primary); }
+.msg-card.sent-card { border-left:3px solid var(--cyan); }
+
+.msg-avatar {
+  width:38px; height:38px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:700; color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--purple));
+}
+.msg-card.sent-card .msg-avatar {
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+}
+
+.msg-content { flex:1; min-width:0; }
+.msg-from { font-size:13px; font-weight:600; margin-bottom:2px; }
+.msg-subject { font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:3px; }
+.msg-preview { font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.msg-time { font-size:10px; color:var(--text-muted); flex-shrink:0; white-space:nowrap; }
+.msg-unread-dot { width:8px; height:8px; border-radius:50%; background:var(--primary); flex-shrink:0; margin-top:6px; }
+
+/* Compose textarea focus */
+#compose-body:focus { border-color:var(--primary); }
+
+/* Read modal */
+.read-header { padding:16px 20px; border-radius:14px 14px 0 0; margin:-24px -24px 0 -24px; background:linear-gradient(135deg,var(--primary),var(--purple)); }
+.read-subject { font-size:16px; font-weight:700; color:#fff; }
+.read-meta { font-size:11px; color:rgba(255,255,255,.7); margin-top:4px; }
+.read-body { font-size:13px; color:var(--text-secondary); line-height:1.8; margin-top:20px; padding:16px; background:var(--surface); border-radius:10px; border:1px solid var(--border); }
+
+/* Empty state */
+.empty-state {
+  text-align:center; padding:40px 20px; color:var(--text-muted);
+}
+.empty-state .empty-icon { font-size:40px; margin-bottom:12px; }
+.empty-state .empty-text { font-size:13px; }

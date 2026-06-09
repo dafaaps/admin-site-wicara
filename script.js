@@ -256,6 +256,7 @@ function doLogin() {
     // Re-render data
     renderDashboard();
     renderReports();
+    renderMessages();
     
     // Update settings page
     const sName = document.getElementById('settings-name');
@@ -290,7 +291,7 @@ function showPage(pageId) {
     if (n.dataset.page === pageId) n.classList.add('active');
   });
   // Update topbar title
-  const titles = { dashboard:'Dashboard', institutions:'Profil Instansi', reports:'Laporan Masuk', settings:'Pengaturan' };
+  const titles = { dashboard:'Dashboard', institutions:'Profil Instansi', reports:'Laporan Masuk', messages:'Kotak Pesan', settings:'Pengaturan' };
   document.getElementById('topbar-title').textContent = titles[pageId] || 'Dashboard';
   closeSidebar();
 }
@@ -370,7 +371,12 @@ function renderInstitutions(filter = 'all') {
   const grid = document.getElementById('institutions-grid');
   if (!grid) return;
 
-  const filtered = filter === 'all' ? institutions : institutions.filter(i => i.category === filter);
+  let filtered = filter === 'all' ? [...institutions] : institutions.filter(i => i.category === filter);
+  
+  // Non-super users can only see their own institution
+  if (currentUser && !currentUser.isSuper) {
+    filtered = filtered.filter(i => i.name === currentUser.institution);
+  }
   
   grid.innerHTML = filtered.map(inst => `
     <div class="card profile-card" onclick="showInstitutionDetail('${inst.id}')">
@@ -584,6 +590,156 @@ function updateReportStatus(reportId, newStatus) {
   showReportDetail(reportId);
 }
 
+// ========== MESSAGING SYSTEM ==========
+let messagesData = [
+  { id:'MSG-001', from:'superadmin', to:'kpk', fromName:'Super Admin', toName:'Admin KPK', subject:'Tindak Lanjut Laporan RPT-2026-001', body:'Mohon segera ditindaklanjuti laporan korupsi dana desa Cimahi. Laporan ini sudah masuk status urgent dan memerlukan penanganan segera. Koordinasikan dengan tim penyidik untuk langkah selanjutnya.', date:'09 Jun 2026, 09:15', read:false },
+  { id:'MSG-002', from:'saber', to:'superadmin', fromName:'Admin Saber Pungli', toName:'Super Admin', subject:'Update OTT Pelabuhan Bakauheni', body:'Lapor, operasi tangkap tangan di Pelabuhan Bakauheni telah berhasil dilaksanakan. 3 oknum petugas berhasil diamankan. Bukti-bukti telah disita. Mohon arahan untuk langkah selanjutnya.', date:'08 Jun 2026, 14:30', read:false },
+  { id:'MSG-003', from:'superadmin', to:'bpk', fromName:'Super Admin', toName:'Admin BPK', subject:'Permintaan Audit APBD Surabaya', body:'Berdasarkan laporan RPT-2026-003, mohon BPK segera melakukan audit investigatif terhadap penggunaan APBD Kota Surabaya tahun 2025. Terdapat indikasi penyimpangan yang signifikan.', date:'08 Jun 2026, 10:00', read:true },
+  { id:'MSG-004', from:'komnasham', to:'superadmin', fromName:'Admin Komnas HAM', toName:'Super Admin', subject:'Laporan Kekerasan Aparat Papua', body:'Kami telah menerima dan memverifikasi laporan kekerasan aparat terhadap warga di Papua. Tim pemantau akan dikirim ke lokasi dalam 48 jam. Mohon dukungan koordinasi dengan Polri.', date:'07 Jun 2026, 16:45', read:false },
+  { id:'MSG-005', from:'ombudsman', to:'superadmin', fromName:'Admin Ombudsman', toName:'Super Admin', subject:'Rekomendasi Perbaikan Layanan BPJS', body:'Berdasarkan investigasi kami, maladministrasi BPJS Kesehatan di Semarang telah dikonfirmasi. Kami akan mengeluarkan rekomendasi perbaikan dalam 7 hari kerja.', date:'06 Jun 2026, 11:20', read:true },
+];
+
+function getMyMessages(filter = 'all') {
+  if (!currentUser) return [];
+  const uname = currentUser.username;
+  let msgs;
+  if (filter === 'sent') {
+    msgs = messagesData.filter(m => m.from === uname);
+  } else if (filter === 'unread') {
+    msgs = messagesData.filter(m => m.to === uname && !m.read);
+  } else if (filter === 'read') {
+    msgs = messagesData.filter(m => m.to === uname && m.read);
+  } else {
+    msgs = messagesData.filter(m => m.to === uname || m.from === uname);
+  }
+  return msgs;
+}
+
+function renderMessages(filter = 'all') {
+  const list = document.getElementById('messages-list');
+  if (!list || !currentUser) return;
+  
+  const msgs = getMyMessages(filter);
+  
+  if (msgs.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">Tidak ada pesan.</div></div>`;
+    return;
+  }
+  
+  const uname = currentUser.username;
+  list.innerHTML = msgs.map(m => {
+    const isSent = m.from === uname;
+    const isUnread = !isSent && !m.read;
+    return `
+      <div class="msg-card ${isUnread ? 'unread' : ''} ${isSent ? 'sent-card' : ''}" onclick="readMessage('${m.id}')">
+        <div class="msg-avatar">${isSent ? m.toName.charAt(0) : m.fromName.charAt(0)}</div>
+        <div class="msg-content">
+          <div class="msg-from">${isSent ? 'Ke: ' + m.toName : m.fromName}</div>
+          <div class="msg-subject">${m.subject}</div>
+          <div class="msg-preview">${m.body}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <div class="msg-time">${m.date}</div>
+          ${isUnread ? '<div class="msg-unread-dot"></div>' : ''}
+          ${isSent ? '<span style="font-size:10px;color:var(--cyan)">Terkirim</span>' : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  updateMsgBadge();
+}
+
+function updateMsgBadge() {
+  if (!currentUser) return;
+  const unreadCount = messagesData.filter(m => m.to === currentUser.username && !m.read).length;
+  const badge = document.getElementById('msg-badge');
+  if (badge) {
+    badge.textContent = unreadCount;
+    badge.style.display = unreadCount > 0 ? 'inline' : 'none';
+  }
+}
+
+function readMessage(msgId) {
+  const m = messagesData.find(msg => msg.id === msgId);
+  if (!m) return;
+  
+  // Mark as read if it's incoming
+  if (m.to === currentUser.username) m.read = true;
+  
+  const isSent = m.from === currentUser.username;
+  const modal = document.getElementById('read-modal');
+  document.getElementById('read-modal-content').innerHTML = `
+    <div style="position:relative">
+      <div class="read-header">
+        <div class="read-subject">${m.subject}</div>
+        <div class="read-meta">${isSent ? 'Ke: ' + m.toName : 'Dari: ' + m.fromName} · ${m.date}</div>
+      </div>
+      <button onclick="closeReadModal()" style="position:absolute;top:-8px;right:-8px;width:32px;height:32px;border-radius:8px;background:rgba(0,0,0,.4);border:none;color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="read-body">${m.body}</div>
+    ${!isSent ? '<button class="login-btn" style="margin-top:16px" onclick="closeReadModal(); replyTo(\'' + m.from + '\',\'' + m.subject.replace(/'/g,"\\'") + '\')">↩️ Balas Pesan</button>' : ''}
+  `;
+  modal.classList.add('show');
+  renderMessages();
+}
+
+function closeReadModal() {
+  document.getElementById('read-modal').classList.remove('show');
+}
+
+function openCompose(toUser, subject) {
+  const select = document.getElementById('compose-to');
+  select.innerHTML = users.filter(u => u.username !== currentUser.username).map(u =>
+    `<option value="${u.username}" ${toUser === u.username ? 'selected' : ''}>${u.name} (${u.institution === 'all' ? 'Super Admin' : u.institution})</option>`
+  ).join('');
+  document.getElementById('compose-subject').value = subject || '';
+  document.getElementById('compose-body').value = '';
+  document.getElementById('compose-modal').classList.add('show');
+}
+
+function closeCompose() {
+  document.getElementById('compose-modal').classList.remove('show');
+}
+
+function replyTo(fromUser, subject) {
+  openCompose(fromUser, 'Re: ' + subject.replace(/^Re: /,''));
+}
+
+function sendMessage() {
+  const to = document.getElementById('compose-to').value;
+  const subject = document.getElementById('compose-subject').value.trim();
+  const body = document.getElementById('compose-body').value.trim();
+  
+  if (!subject || !body) { alert('Subjek dan isi pesan harus diisi!'); return; }
+  
+  const toUser = users.find(u => u.username === to);
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) + ', ' + now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  
+  messagesData.unshift({
+    id: 'MSG-' + String(messagesData.length + 1).padStart(3,'0'),
+    from: currentUser.username,
+    to: to,
+    fromName: currentUser.name,
+    toName: toUser.name,
+    subject: subject,
+    body: body,
+    date: dateStr,
+    read: false
+  });
+  
+  closeCompose();
+  renderMessages();
+  showPage('messages');
+}
+
+function filterMessages(filter, el) {
+  document.querySelectorAll('.msg-filter').forEach(b => b.classList.remove('active-filter'));
+  el.classList.add('active-filter');
+  renderMessages(filter);
+}
+
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', () => {
   populateHintGrid();
@@ -593,4 +749,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Close modal on overlay click
 document.addEventListener('click', (e) => {
   if (e.target.id === 'detail-modal') closeModal();
+  if (e.target.id === 'compose-modal') closeCompose();
+  if (e.target.id === 'read-modal') closeReadModal();
 });
