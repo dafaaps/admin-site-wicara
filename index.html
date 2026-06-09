@@ -162,38 +162,40 @@
       </div>
 
       <!-- Quick Access Institutions -->
-      <div class="section-header">
-        <h3>Instansi Utama</h3>
-        <button class="btn-sm" onclick="showPage('institutions')">Lihat Semua →</button>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
-        <div class="card" style="cursor:pointer;text-align:center;padding:18px" onclick="showPage('institutions')">
-          <div style="font-size:28px;margin-bottom:8px">⚖️</div>
-          <div style="font-size:13px;font-weight:700">KPK</div>
-          <div style="font-size:10px;color:var(--text-muted)">Anti-Korupsi</div>
-          <div style="font-size:18px;font-weight:800;color:var(--primary);margin-top:8px">2,847</div>
-          <div style="font-size:10px;color:var(--text-muted)">Laporan</div>
+      <div id="dashboard-quick-institutions">
+        <div class="section-header">
+          <h3>Instansi Utama</h3>
+          <button class="btn-sm" onclick="showPage('institutions')">Lihat Semua →</button>
         </div>
-        <div class="card" style="cursor:pointer;text-align:center;padding:18px" onclick="showPage('institutions')">
-          <div style="font-size:28px;margin-bottom:8px">🚨</div>
-          <div style="font-size:13px;font-weight:700">Saber Pungli</div>
-          <div style="font-size:10px;color:var(--text-muted)">Anti-Pungli</div>
-          <div style="font-size:18px;font-weight:800;color:var(--red);margin-top:8px">6,230</div>
-          <div style="font-size:10px;color:var(--text-muted)">Laporan</div>
-        </div>
-        <div class="card" style="cursor:pointer;text-align:center;padding:18px" onclick="showPage('institutions')">
-          <div style="font-size:28px;margin-bottom:8px">🏛️</div>
-          <div style="font-size:13px;font-weight:700">Ombudsman RI</div>
-          <div style="font-size:10px;color:var(--text-muted)">Pelayanan Publik</div>
-          <div style="font-size:18px;font-weight:800;color:var(--blue);margin-top:8px">3,421</div>
-          <div style="font-size:10px;color:var(--text-muted)">Laporan</div>
-        </div>
-        <div class="card" style="cursor:pointer;text-align:center;padding:18px" onclick="showPage('institutions')">
-          <div style="font-size:28px;margin-bottom:8px">✊</div>
-          <div style="font-size:13px;font-weight:700">Komnas HAM</div>
-          <div style="font-size:10px;color:var(--text-muted)">Hak Asasi Manusia</div>
-          <div style="font-size:18px;font-weight:800;color:var(--cyan);margin-top:8px">2,100</div>
-          <div style="font-size:10px;color:var(--text-muted)">Laporan</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+          <div class="card" style="cursor:pointer;text-align:center;padding:18px" onclick="showPage('institutions')">
+            <div style="font-size:28px;margin-bottom:8px">⚖️</div>
+            <div style="font-size:13px;font-weight:700">KPK</div>
+            <div style="font-size:10px;color:var(--text-muted)">Anti-Korupsi</div>
+            <div style="font-size:18px;font-weight:800;color:var(--primary);margin-top:8px">2,847</div>
+            <div style="font-size:10px;color:var(--text-muted)">Laporan</div>
+          </div>
+          <div class="card" style="cursor:pointer;text-align:center;padding:18px" onclick="showPage('institutions')">
+            <div style="font-size:28px;margin-bottom:8px">🚨</div>
+            <div style="font-size:13px;font-weight:700">Saber Pungli</div>
+            <div style="font-size:10px;color:var(--text-muted)">Anti-Pungli</div>
+            <div style="font-size:18px;font-weight:800;color:var(--red);margin-top:8px">6,230</div>
+            <div style="font-size:10px;color:var(--text-muted)">Laporan</div>
+          </div>
+          <div class="card" style="cursor:pointer;text-align:center;padding:18px" onclick="showPage('institutions')">
+            <div style="font-size:28px;margin-bottom:8px">🏛️</div>
+            <div style="font-size:13px;font-weight:700">Ombudsman RI</div>
+            <div style="font-size:10px;color:var(--text-muted)">Pelayanan Publik</div>
+            <div style="font-size:18px;font-weight:800;color:var(--blue);margin-top:8px">3,421</div>
+            <div style="font-size:10px;color:var(--text-muted)">Laporan</div>
+          </div>
+          <div class="card" style="cursor:pointer;text-align:center;padding:18px" onclick="showPage('institutions')">
+            <div style="font-size:28px;margin-bottom:8px">✊</div>
+            <div style="font-size:13px;font-weight:700">Komnas HAM</div>
+            <div style="font-size:10px;color:var(--text-muted)">Hak Asasi Manusia</div>
+            <div style="font-size:18px;font-weight:800;color:var(--cyan);margin-top:8px">2,100</div>
+            <div style="font-size:10px;color:var(--text-muted)">Laporan</div>
+          </div>
         </div>
       </div>
     </div>
@@ -343,6 +345,6 @@
   <div class="modal" style="max-width:540px" id="read-modal-content"></div>
 </div>
 
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>

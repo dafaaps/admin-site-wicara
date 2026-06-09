@@ -258,6 +258,11 @@ function doLogin() {
       navInst.style.display = user.isSuper ? 'flex' : 'none';
     }
     
+    const quickInst = document.getElementById('dashboard-quick-institutions');
+    if(quickInst) {
+      quickInst.style.display = user.isSuper ? 'block' : 'none';
+    }
+    
     // Re-render data
     renderDashboard();
     renderReports();
