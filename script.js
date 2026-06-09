@@ -253,6 +253,11 @@ function doLogin() {
       }
     }
     
+    const navInst = document.getElementById('nav-institutions');
+    if(navInst) {
+      navInst.style.display = user.isSuper ? 'flex' : 'none';
+    }
+    
     // Re-render data
     renderDashboard();
     renderReports();
@@ -283,6 +288,11 @@ function doLogout() {
 let currentPage = 'dashboard';
 
 function showPage(pageId) {
+  // Prevent regular admins from accessing institutions page
+  if (pageId === 'institutions' && currentUser && !currentUser.isSuper) {
+    pageId = 'dashboard';
+  }
+
   currentPage = pageId;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + pageId).classList.add('active');
